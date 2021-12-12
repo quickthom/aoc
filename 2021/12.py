@@ -1,20 +1,15 @@
-from handy import read, read_test, E
+from handy import read
 from collections import defaultdict
 
 lines = read(12)
-#lines = read_test(12)
 
 caves = dict()
-small = set('abcdefghijklmnopqrstuvwxyz')
 
 class Cave:
     def __init__(self, name):
         self.name = name
         self.links = set()
-        if len(set(self.name) - small) == 0:
-            self.size = 'small'
-        else:
-            self.size = 'large'
+        self.size = 'small' if self.name.islower() else 'large'
     def link_to(self, cave):
         self.links.add(cave)
 
@@ -30,14 +25,12 @@ for line in lines:
 def can_go(cave, visited):
     if cave.name =='start':
         return False
-    if cave.size == 'large':
+    elif cave.size == 'large':
         return True
-    if len(visited) == 0 or max(visited.values()) > 1:
-        smallcap = 1
+    elif len(visited) == 0 or max(visited.values()) > 1:
+        return visited[cave] < 1
     else:
-        smallcap = 2
-    if visited[cave] < smallcap:
-        return True
+        return visited[cave] < 2
     return False
 
 def reach_end_from(cave, visited):
@@ -51,7 +44,7 @@ def reach_end_from(cave, visited):
             v = visited.copy()
             if dest.size == 'small':
                 v[dest] += 1
-            routes += reach_end_from(dest,v )
+            routes += reach_end_from(dest,v)
     return routes
 
 
