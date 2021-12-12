@@ -14,15 +14,14 @@ def can_go(cave, small_visits):
         return small_visits[cave] < 2
 
 def reach_end_from(cave, small_visits):
+    if cave.islower():
+        small_visits[cave] += 1
     routes = 0
     for dest in links[cave]:
         if dest == 'end':
             routes += 1
         elif can_go(dest, small_visits):
-            sv = small_visits.copy()
-            if dest.islower():
-                sv[dest] += 1
-            routes += reach_end_from(dest,sv)
+            routes += reach_end_from(dest,small_visits.copy())
     return routes
 
 small_visits = defaultdict(int)
