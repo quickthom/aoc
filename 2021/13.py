@@ -29,5 +29,5 @@ for ax, n in folds:
         grid = (grid | overlay)[:,:crease]
 
 print(grid.sum())
-print('\n'.join([' '.join(['#' if x == 1 else "." for x in z]) for z in
+print('\n'.join([''.join(['##' if x == 1 else "  " for x in z]) for z in
     grid]))
