@@ -1,93 +1,77 @@
 from handy import *
 import numpy as np
 
-lines = read(16)
-hx = lines[0]
-
-def bint(x): return int(x, base=2)
 def unhex(c):
     b = bin(int(c, base=16))[2:]
-    while len(b) % 4 != 0:
+    while len(b) < 4*len(c):
         b = "0" + b
-    i = 0
-    while c[i] == '0':
-        b = "0000" + b
-        i += 1
     return b
 
-def bex(x, n):
-    return bint(''.join([x.pop() for i in range(n)]))
-def bexs(x, n):
+def bint(x): return int(x, base=2)
+
+def bexs(x, n): 
     return ''.join([x.pop() for i in range(n)])
+def bex(x, n): return bint(bexs(x,n))
 
 class Packet:
-    def __init__(self, version, typ):
-        self.version = version
+    def __init__(self, vers, typ):
+        self.vers = vers
         self.typ = typ
-        self.literal = None
-        self.value = None
-        self.subpackets = []
-    def extract_literal(self, content):
+        self.val = None
+        self.subs = []
+
+    def extract_literal(self, b):
         xtract = ""
-        while content:
-            more = bex(content, 1)
-            xtract += bexs(content, 4)
+        while b:
+            more = bex(b, 1)
+            xtract += bexs(b, 4)
             if not more:
                 break
-        self.literal = bint(xtract)
-        self.value = self.literal
-        return content
-    def __repr__(self):
-        if self.typ ==4:
-            return f'V:{self.version} Value:{self.value}'
-        else:
-            return f'V:{self.version} T:{self.typ} Subs:{len(self.subpackets)} Value:{self.value}'
+        self.val = bint(xtract)
+
+    def __repr__(s): return f'V:{s.vers} T:{s.typ} Subs:{len(s.subs)} Value:{s.val}'
+
     def calculate(self):
-        for sub in self.subpackets:
+        for sub in self.subs:
             sub.calculate()
         if self.typ == 0:
-            self.value = sum([x.value for x in self.subpackets])
+            self.val = sum([x.val for x in self.subs])
         elif self.typ == 1:
-            self.value = np.product([x.value for x in self.subpackets])
+            self.val = np.product([x.val for x in self.subs])
         elif self.typ == 2:
-            self.value = min([x.value for x in self.subpackets])
+            self.val = min([x.val for x in self.subs])
         elif self.typ == 3:
-            self.value = max([x.value for x in self.subpackets])
-        elif self.typ == 4:
-            self.value = self.literal
+            self.val = max([x.val for x in self.subs])
         elif self.typ == 5:
-            self.value = int(self.subpackets[0].value > self.subpackets[1].value)
+            self.val = int(self.subs[0].val > self.subs[1].val)
         elif self.typ == 6:
-            self.value = int(self.subpackets[0].value < self.subpackets[1].value)
+            self.val = int(self.subs[0].val < self.subs[1].val)
         elif self.typ == 7:
-            self.value = int(self.subpackets[0].value == self.subpackets[1].value)
-        return self.value
-    
+            self.val = int(self.subs[0].val == self.subs[1].val)
+        return self.val
 
-bn = unhex(hx)
-b = list(reversed(bn))
-vcount = 0
 def parse(b, loops=1):
-    global vcount
+    global vsum
     out = []
     for i in range(loops):
-        if not b:
-            break
-        v = bex(b, 3)
-        t = bint(''.join([b.pop() for i in range(3)]))
-        vcount += v
+        if not b: break
+        v, t = bex(b, 3), bex(b, 3) # Header
+        vsum += v
         p = Packet(v,t)
         if t == 4:
-            b = p.extract_literal(b)
+            p.extract_literal(b)
         else:
-            lt = bex(b, 1)
-            if lt == 0:
-                ln = bex(b, 15)
-                p.subpackets = parse(list(reversed(bexs(b, ln))),1000)
+            if bex(b,1) == 0:
+                p.subs = parse(list(reversed(bexs(b, bex(b,15)))),1000)
             else:
-                subs = bex(b, 11)
-                p.subpackets = parse(b, subs)
+                p.subs = parse(b, bex(b, 11))
         out.append(p)
     return out
 
+hx = read(16)[0]
+b = list(reversed(unhex(hx)))
+
+vsum = 0
+top = parse(b)[0]
+print('Part 1:', vsum, 'Part 2:', top.calculate())
 
