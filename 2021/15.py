@@ -1,5 +1,6 @@
 from handy import read_grid
 import numpy as np
+from numpy import argmin
 
 grid = read_grid(15,col_delim="")
 
@@ -21,7 +22,6 @@ scores = np.ones_like(g)*100000
 scores[0,0] = 0
 scores[0,1] = grid[0,1]
 scores[1,0] = grid[1,0]
-
 def run(grid, scores):
     for r in range(grid.height):
         for c in range(grid.width):
@@ -33,19 +33,44 @@ def run(grid, scores):
 oldsum = sum(scores).sum()
 oldmin = scores[grid.height-1,grid.width-1]
 
-tolerance = 10
-for i in range(500):
-    run(grid,scores)
-    newsum = sum(scores).sum()
-    newmin = scores[grid.height-1,grid.width-1]
-    print(newsum,scores[grid.height-1, grid.width-1])
-    if newmin == oldmin:
-        tolerance -= 1
-    else:
-        tolerance = 10
-    if oldsum==newsum or tolerance <= 0:
-        print('Converge')
-        break
-    oldsum = newsum
-    oldmin=newmin
-        
+tolerance = 0
+#for i in range(500):
+#    run(grid,scores)
+#    newsum = sum(scores).sum()
+#    newmin = scores[grid.height-1,grid.width-1]
+#    print(newsum,scores[grid.height-1, grid.width-1])
+#    if newmin == oldmin:
+#        tolerance -= 1
+#    else:
+#        tolerance = 1
+#    if oldsum==newsum or tolerance <= 0:
+#        print('Converge')
+#        break
+#    oldsum = newsum
+#    oldmin=newmin
+import heapq
+h,w = grid.height,grid.width
+def do():
+    seen = set()
+    scores = np.ones_like(g)*100000
+    scores[0,0] = 0
+    start = (0,0)
+    q=[]
+    heapq.heappush(q, (0,start))
+    while q:
+        score, (r,c) = heapq.heappop(q)
+#        if (r,c)==(h-1,w-1):
+#            print(score)
+#            break
+        if (r,c) in seen:
+            continue
+        seen.add((r,c))
+        for nr,nc in grid.get_4_neighbors(r,c):
+            if (nr,nc) not in seen:
+                alt = score + g[nr,nc]
+                if scores[nr,nc] > alt:
+                  scores[nr,nc] = alt
+                  heapq.heappush(q,(alt, (nr,nc)))
+
+
+

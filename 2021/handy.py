@@ -4,12 +4,12 @@ def read(fn):
 def read_test(fn):
     with open(f'input/{fn}.test','r') as f:
         return [x.strip() for x in f.readlines()]
-def read_grid(fn, col_delim=" ", row_delim="\n"):
+def read_grid(fn, col_delim=" ", row_delim="\n",dtype=int):
     with open(f'input/{fn}','r') as f:
-        return Grid(f.read(), col_delim=col_delim, row_delim=row_delim)
-def read_test_grid(fn, col_delim=" ", row_delim="\n"):
+        return Grid(f.read(), col_delim=col_delim, row_delim=row_delim,dtype=dtype)
+def read_test_grid(fn, col_delim=" ", row_delim="\n",dtype=int):
     with open(f'input/{fn}.test','r') as f:
-        return Grid(f.read(), col_delim=col_delim, row_delim=row_delim)
+        return Grid(f.read(), col_delim=col_delim, row_delim=row_delim,dtype=dtype)
 
 E = enumerate
 
