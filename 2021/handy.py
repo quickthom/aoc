@@ -12,6 +12,9 @@ def read_test_grid(fn, col_delim=" ", row_delim="\n",dtype=int):
         return Grid(f.read(), col_delim=col_delim, row_delim=row_delim,dtype=dtype)
 
 E = enumerate
+R = reversed
+D = dict
+L = list
 
 class Grid:
     def __init__(self, data, col_delim=" ", row_delim="\n", dtype=int):

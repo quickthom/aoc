@@ -1,0 +1,1 @@
+/home/thom/py/aoc/2021/handy.py

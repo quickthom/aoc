@@ -23,10 +23,9 @@ class Packet:
     def extract_literal(self, b):
         xtract = ""
         while b:
-            more = bex(b, 1)
+            more = bex(b,1)
             xtract += bexs(b, 4)
-            if not more:
-                break
+            if not more: break
         self.val = bint(xtract)
 
     def __repr__(s): return f'V:{s.vers} T:{s.typ} Subs:{len(s.subs)} Value:{s.val}'
@@ -62,14 +61,14 @@ def parse(b, loops=1):
             p.extract_literal(b)
         else:
             if bex(b,1) == 0:
-                p.subs = parse(list(reversed(bexs(b, bex(b,15)))),1000)
+                p.subs = parse(L(R(bexs(b, bex(b,15)))),1000)
             else:
                 p.subs = parse(b, bex(b, 11))
         out.append(p)
     return out
 
 hx = read(16)[0]
-b = list(reversed(unhex(hx)))
+b = L(R(unhex(hx)))
 
 vsum = 0
 top = parse(b)[0]
