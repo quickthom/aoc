@@ -23,7 +23,7 @@ def preproc(data):
 
 def print_2D_data(data):
     dwidth = len(data[0])
-    print("    1234567890 13 16  20   25"[:dwidth+4])
+    print("    1 3 5 7 9  13 16  20   25   30   35   40   45   50"[:dwidth+4])
     print('    '+'-'*dwidth)
     for i in range(len(data)):
         print(i, end=" | ")
