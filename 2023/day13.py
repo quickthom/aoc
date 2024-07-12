@@ -89,23 +89,24 @@ def do_flip(data, r, c):
     data[r] = new_row
     return data
 
-for sample_i, sample in enumerate(samples):
-    oldscore = scores[sample_i]
-    found = False
-    for i in range(len(sample)):
-        for j in range(len(sample[0])):
-            if not found:
-                do_flip(sample, i, j)
-                for r in find_identical_rows(sample):
-                    if mirrorcheck(sample, r):
-                        if 100*(r+1) != oldscore:
-                            found = True
-                            newscores.append(100 * (r+1))
-                for c in find_identical_columns(sample):
-                    if mirrorcheck(transpose(sample), c):
-                        if c+1 != oldscore:
-                            found = True
-                            newscores.append(c + 1)
-                do_flip(sample, i, j)
+if __name__=='__main__':
+    for sample_i, sample in enumerate(samples):
+        oldscore = scores[sample_i]
+        found = False
+        for i in range(len(sample)):
+            for j in range(len(sample[0])):
+                if not found:
+                    do_flip(sample, i, j)
+                    for r in find_identical_rows(sample):
+                        if mirrorcheck(sample, r):
+                            if 100*(r+1) != oldscore:
+                                found = True
+                                newscores.append(100 * (r+1))
+                    for c in find_identical_columns(sample):
+                        if mirrorcheck(transpose(sample), c):
+                            if c+1 != oldscore:
+                                found = True
+                                newscores.append(c + 1)
+                    do_flip(sample, i, j)
 
 print(sum(newscores))
