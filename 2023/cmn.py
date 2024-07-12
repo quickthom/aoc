@@ -46,11 +46,13 @@ class NodeGrid:
             n.all_nodes = self.nodes
             self.nodes[(r,c)] = n
 
-
     def all_points(self):
         from itertools import product
         return product(range(self.nrows),range(self.ncols))
 
+    def loc(self, r, c):
+        return self.nodes[(r,c)]
+    
     def print(self):
         dwidth = self.ncols
         print("    1234567890 13 16  20   25"[:dwidth+4])
@@ -74,6 +76,16 @@ class Node:
         self._down = ...
         self._left = ...
         self._right = ...
+        self.flags = dict()
+
+    def __getattr__(self, item):
+        try:
+            return super().__getattr__(item)
+        except AttributeError:
+            if item in self.flags:
+                return self.flags[item]
+            else:
+                raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{item}'")
 
     def up(self):
         if self._up is ...:
