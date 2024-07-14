@@ -33,14 +33,16 @@ def transpose(data):
     return ["".join(x) for x in np.array([list(x) for x in data]).T]
 
 class NodeGrid:
-    def __init__(self, data):
+    def __init__(self, data, nodecls=None):
+        if nodecls is None:
+            nodecls = Node
         self.nrows = len(data)
         self.ncols = len(data[0])
         self.maxrow = self.nrows-1
         self.maxcol = self.ncols-1
         self.nodes = dict()
         for r,c in self.all_points():
-            n = Node((r,c))
+            n = nodecls((r,c))
             n.value = data[r][c]
             n.grid = self
             n.all_nodes = self.nodes
@@ -62,8 +64,6 @@ class NodeGrid:
             for j in range(dwidth):
                 print(self.nodes[(i,j)].value, end="")
             print("")
-     
-        
         
 class Node:
 
@@ -120,4 +120,14 @@ class Node:
             else:
                 self._right = self.all_nodes[(self.coord[0],self.coord[1]+1)]
         return self._right
-                               
+    
+    def go(self, d):
+        return self.__getattribute__(d)()
+
+    def exits(self):
+        return filter(is_not_none, [self.right(), self.left(), self.up(), self.down()])
+
+def is_not_none(o):
+    return o is not None
+def is_none(o):
+    return o is None
