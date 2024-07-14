@@ -27,13 +27,20 @@ U 3 (#a77fa3)
 L 2 (#015232)
 U 2 (#7a21e3)
 """
-# data = preproc(sample)
+data = preproc(sample)
 G = NodeGrid(data)
 
-r = 223
-c = 68
-marks = [(223,68)]
+d_code_map = "RDLU"
+
+# r = 223
+# c = 68
+# marks = [(223,68)]
+r = 0
+c = 0
+marks = [(0,0)]
 for d, n, col in [x.split() for x in data]:
+    n = int(col[-7:-2], 16)
+    d = d_code_map[int(col[-2])]
     for i in range(int(n)):
         if d == 'R':
             c += 1
@@ -67,7 +74,8 @@ for i in range(minr,maxr+1):
         n.all_nodes = G.nodes
 G.print()
 
-interior_point = (258,5)
+# interior_point = (258,5)
+interior_point = (1,1)
 nodes_to_fill = [G.loc(*interior_point)]
 
 while len(nodes_to_fill) > 0:
@@ -83,24 +91,3 @@ while len(nodes_to_fill) > 0:
                 nodes_to_fill.append(exit)
             
 sum((n.holds_lava for n in G.nodes.values()))
-# 52237 too low
-
-# for r in range(minr, maxr+1):
-#     pts = [p for p in marks if p[0] == r]
-#     row_marks = sorted([p[1] for p in pts])
-#     sweep_on = False
-#     i = 0
-#     while i < len(row_marks):
-#         c = row_marks[i]
-#         while c+1 in row_marks:
-#             if c in row_marks:
-#                 row_marks.remove(c)
-#             row_marks.remove(c+1)
-#             c += 1
-#         else:
-#             i += 1
-#     print(row_marks)
-        
-#     # for c in row_marks:
-#     #     if 
-
